@@ -21,7 +21,26 @@ A Nagios NRPE plugin written in Python to monitor celery workers.
 ```
 
 ## Command Line Parameters
+- workers - [*required*] - Space separated list of worker node names to check
+- --service - [*optional*] - Service script used to manage celery; defaults to "celeryd"
 
 ## Example Usage
+As standalone:
+```
+[user@host ~]# sudo ./check_celery.py atomic1 atomic2 periodic1
+OK - All workers running
+```
 
+As NRPE plugin:
+```
+TBD
+```
 ### Sample services.cfg
+```
+define service{
+    use                 generic-service
+    hostgroup_name	    celery_hosts
+    service_description Check Celery Workers
+    check_command	    check_nrpe!check_celery!atomic1 atomic2 periodic1
+}
+```
