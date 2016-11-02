@@ -47,8 +47,8 @@ class CeleryWorkerCheck(NagiosPlugin):
             self._check_worker_status(worker)
 
     def _check_worker_status(self, worker):
-        regex_worker_pattern = 'celeryd \(node {}\) \(pid \d+\) is running'.format(worker)
-        worker_status_is_running = re.findall(regex_worker_pattern, self.status_output)
+        worker_regex = 'celeryd \(node {}\) \(pid \d+\) is running'.format(worker)
+        worker_status_is_running = re.findall(worker_regex, self.status_output)
         if not worker_status_is_running:
             self._critical_workers.append(worker)
 
