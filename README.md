@@ -4,20 +4,20 @@ A Nagios NRPE plugin written in Python to monitor celery workers.
 
 ## Requirements
 - Python 2.7
-- Functioning NRPE setup
-  - http://www.tecmint.com/how-to-add-linux-host-to-nagios-monitoring-server/ for instructions
+- For RHEL distros:
+  - yum install nagios nagios-devel nagios-plugins nagios-plugins-nrpe nrpe
 
 ## Installation
-- Copy check_supervisord.py to /usr/local/nagios/libexec/
-- ```chmod u+x /usr/local/nagios/libexec/check_celery.py```
-- ```chown nagios:nagios /usr/local/nagios/libexec/check_celery.py```
+- Copy check_celery.py to /usr/lib64/nagios/plugins
+- ```chmod u+x /usr/lib64/nagios/pluginscheck_celery.py```
+- ```chown nagios:nagios /usr/lib64/nagios/pluginscheck_celery.py```
 - Add command to *nrpe.cfg*:
-  - ```command[check_celery]=/usr/bin/sudo /usr/local/nagios/libexec/check_celery.py $ARG1$```
-- Allow nagios user to run the check with sudo without requiring a password
+  - ```command[check_celery]=/usr/bin/sudo /usr/lib64/nagios/plugins/check_celery.py $ARG1$```
+- Allow nrpe user to run the check with sudo without requiring a password
   - Use ```visudo``` command to edit */etc/sudoers* and add following:
 ```
-    Defaults:nagios !requiretty
-    nagios    ALL=(ALL)   NOPASSWD:/usr/local/nagios/libexec/check_celery.py
+    Defaults:nrpe !requiretty
+    nrpe    ALL=(ALL)   NOPASSWD:/usr/local/nagios/libexec/check_celery.py
 ```
 
 ## Command Line Parameters
