@@ -12,7 +12,7 @@ A Nagios NRPE plugin written in Python to monitor celery workers.
 - ```chmod u+x /usr/local/nagios/libexec/check_celery.py```
 - ```chown nagios:nagios /usr/local/nagios/libexec/check_celery.py```
 - Add command to *nrpe.cfg*:
-  - ```command[check_celery]=/usr/bin/sudo /usr/local/nagios/libexec/check_celery.py```
+  - ```command[check_celery]=/usr/bin/sudo /usr/local/nagios/libexec/check_celery.py $ARG1$```
 - Allow nagios user to run the check with sudo without requiring a password
   - Use ```visudo``` command to edit */etc/sudoers* and add following:
 ```
@@ -21,7 +21,7 @@ A Nagios NRPE plugin written in Python to monitor celery workers.
 ```
 
 ## Command Line Parameters
-- workers - [*required*] - Space separated list of worker node names to check
+- Space separated list of worker node names to check
 - --service - [*optional*] - Service script used to manage celery; defaults to "celeryd"
 
 ## Example Usage
@@ -33,7 +33,7 @@ OK - All workers running
 
 As NRPE plugin:
 ```
-TBD
+./check_nrpe -H localhost -c check_celery -a "atomic1 atomic2 periodic1 --service celeryd_scc"
 ```
 ### Sample services.cfg
 ```
@@ -41,6 +41,6 @@ define service{
     use                 generic-service
     hostgroup_name	    celery_hosts
     service_description Check Celery Workers
-    check_command	    check_nrpe!check_celery!atomic1 atomic2 periodic1
+    check_command	    check_nrpe!check_celery!"atomic1 atomic2 periodic1"
 }
 ```
