@@ -44,3 +44,11 @@ define service{
     check_command	    check_nrpe!check_celery!"atomic1 atomic2 periodic1"
 }
 ```
+
+In order to pass arguments to the command being executed by check_nrpe, I'd recommend creating a new command, similar to the default chec_nrpe command:
+```
+define command{
+    command_name    check_nrpe_with_args
+    command_line    $USER1$/check_nrpe -H '$HOSTADDRESS$' -c '$ARG1$' -a $ARG2$
+}
+```
