@@ -9,7 +9,7 @@ A Nagios NRPE plugin written in Python to monitor celery workers.
 
 ## Installation
 - Copy check_celery.py to /usr/lib64/nagios/plugins
-- ```chmod u+x /usr/lib64/nagios/pluginscheck_celery.py```
+- ```chmod u+x /usr/lib64/nagios/plugins/check_celery.py```
 - ```chown nagios:nagios /usr/lib64/nagios/pluginscheck_celery.py```
 - Add command to *nrpe.cfg*:
   - ```command[check_celery]=/usr/bin/sudo /usr/lib64/nagios/plugins/check_celery.py $ARG1$```
@@ -17,7 +17,7 @@ A Nagios NRPE plugin written in Python to monitor celery workers.
   - Use ```visudo``` command to edit */etc/sudoers* and add following:
 ```
     Defaults:nrpe !requiretty
-    nrpe    ALL=(ALL)   NOPASSWD:/usr/local/nagios/libexec/check_celery.py
+    nrpe    ALL=(ALL)   NOPASSWD:/usr/lib64/nagios/plugins/check_celery.py
 ```
 
 ## Command Line Parameters
