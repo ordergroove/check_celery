@@ -30,7 +30,7 @@ class CeleryWorkerCheck(NagiosPlugin):
     OK_STATUS_MSG = 'All workers running'
     UNKNOWN_STATUS_MSG = 'Unable to get worker status(es)'
 
-    WORKER_REGEX_TPL = '(\(node {}\))? \(pid \d+\) (is up|is running)'
+    WORKER_REGEX_TPL = '{service} (\(node {worker}\) )?\(pid \d+\) is (up|running)'
     CRITICAL_STATUS_MSG_TPL = '{} worker(s) down'
 
     def __init__(self, workers, service):
@@ -54,7 +54,7 @@ class CeleryWorkerCheck(NagiosPlugin):
             self._check_worker_status(worker)
 
     def _check_worker_status(self, worker):
-        worker_regex = self.WORKER_REGEX_TPL.format(worker)
+        worker_regex = self.WORKER_REGEX_TPL.format(service=self._service, worker=worker)
         worker_status_is_running = re.findall(worker_regex, self.status_output)
         if not worker_status_is_running:
             self._critical_workers.append(worker)
