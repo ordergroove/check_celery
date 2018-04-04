@@ -1,6 +1,6 @@
-import mock
 import subprocess
 import unittest
+import mock
 
 from check_celery import CeleryWorkerCheck
 
@@ -53,4 +53,16 @@ class TestCeleryWorkerCheck(unittest.TestCase):
             self._cwc.run_check()
         self._cwc.critical_state.assert_called_once_with(
             self._cwc.CRITICAL_STATUS_MSG_TPL.format(self._workers[0])
+        )
+
+    def test_10_1_init_script_exit_status_check_gets_parsed(self, mock_check_output):
+        cmd_output = '{} down: no pidfiles found\n'.format(self._service)
+        mock_check_output.side_effect = subprocess.CalledProcessError(
+            cmd='cmd', returncode=1, output=cmd_output
+        )
+
+        with self.assertRaises(SystemExit):
+            self._cwc.run_check()
+        self._cwc.critical_state.assert_called_once_with(
+            self._cwc.CRITICAL_STATUS_MSG_TPL.format(', '.join(self._workers))
         )
