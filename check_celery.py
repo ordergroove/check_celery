@@ -30,7 +30,7 @@ class CeleryWorkerCheck(NagiosPlugin):
     OK_STATUS_MSG = 'All workers running'
     UNKNOWN_STATUS_MSG = 'Unable to get worker status(es)'
 
-    WORKER_REGEX_TPL = '\(node {}\) \(pid \d+\) is running'
+    WORKER_REGEX_TPL = '{service} (\(node {worker}\) )?\(pid \d+\) is (up|running)'
     CRITICAL_STATUS_MSG_TPL = '{} worker(s) down'
 
     def __init__(self, workers, service):
@@ -41,21 +41,26 @@ class CeleryWorkerCheck(NagiosPlugin):
         self._critical_workers = []
 
     def run_check(self):
-        try:
-            self.status_output = subprocess.check_output(self._check_cmd)
-        except subprocess.CalledProcessError:
-            self.unknown_state(self.UNKNOWN_STATUS_MSG)
-
+        self._set_status_output()
         self._check_status_output()
         self._report_results()
+
+    def _set_status_output(self):
+        try:
+            self._status_output = subprocess.check_output(self._check_cmd)
+        except subprocess.CalledProcessError as process_exc:
+            if process_exc.returncode == 1:
+                self._status_output = process_exc.output
+            else:
+               self.unknown_state(self.UNKNOWN_STATUS_MSG)
 
     def _check_status_output(self):
         for worker in self._workers:
             self._check_worker_status(worker)
 
     def _check_worker_status(self, worker):
-        worker_regex = self.WORKER_REGEX_TPL.format(worker)
-        worker_status_is_running = re.findall(worker_regex, self.status_output)
+        worker_regex = self.WORKER_REGEX_TPL.format(service=self._service, worker=worker)
+        worker_status_is_running = re.findall(worker_regex, self._status_output)
         if not worker_status_is_running:
             self._critical_workers.append(worker)
 
